@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sedweb/models/article.dart';
 import 'package:sedweb/models/user_model.dart';
 import 'package:sedweb/service/api_service.dart';
@@ -70,14 +72,22 @@ class _ArticleFullScreenState extends State<ArticleFullScreen> {
     setState(() {
       isReadLoading = true;
     });
-    var res = await getApplicationDocumentsDirectory();
-    String appDocumentsPath = res.path;
-    if (File(appDocumentsPath + widget.article.docName).existsSync()) {
+    var res = await getExternalStorageDirectory();
+    String appDocumentsPath = res!.absolute.path;
+    var file = File('$appDocumentsPath/${widget.article.docName}');
+    if (file.existsSync()) {
       setState(() {
         isReadLoading = false;
       });
-      await OpenFile.open(File(appDocumentsPath + widget.article.docName).path)
-          .then((value) => print(value.message));
+      log(file.existsSync().toString());
+      // log(file.readAsString().toString());
+      // return;
+      if (await Permission.manageExternalStorage.request().isGranted) {
+        await OpenFile.open(file.path)
+            .then((value) => print(value.type))
+            .onError((error, stackTrace) =>
+                log(error.toString(), stackTrace: stackTrace));
+      }
       return;
     }
 
@@ -87,7 +97,9 @@ class _ArticleFullScreenState extends State<ArticleFullScreen> {
       isReadLoading = false;
     });
     if (result is File) {
-      OpenFile.open(result.path).then((value) => print(value.message));
+      if (await Permission.manageExternalStorage.request().isGranted) {
+        OpenFile.open(result.path).then((value) => print(value.message));
+      }
       return;
     }
     //TODO: show error dialog here
