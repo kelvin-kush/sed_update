@@ -118,10 +118,11 @@ class _ArticleFullScreenState extends State<ArticleFullScreen> {
     setState(() {
       isSummarizing = true;
     });
-    var res = await getApplicationDocumentsDirectory();
-    String appDocumentsPath = res.path;
-    if (File(appDocumentsPath + widget.article.docName).existsSync()) {
-      var res = extractText(File(appDocumentsPath + widget.article.docName));
+    var res = await getExternalStorageDirectory();
+    String appDocumentsPath = res!.absolute.path;
+    var file = File('$appDocumentsPath/${widget.article.docName}');
+    if (file.existsSync()) {
+      var res = extractText(file);
 
       if (res != null) {
         _getSummary(res);
@@ -139,7 +140,7 @@ class _ArticleFullScreenState extends State<ArticleFullScreen> {
         widget.article.documentUrl, appDocumentsPath, widget.article.docName);
 
     if (result is File) {
-      var res = extractText(File(appDocumentsPath + widget.article.docName));
+      var res = extractText(file);
       if (res != null) {
         _getSummary(res);
         return;

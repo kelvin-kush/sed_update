@@ -1,1 +1,1 @@
-const baseUrl = 'https://summary-backend-10.herokuapp.com/';
+const baseUrl = 'https://summary-backend.onrender.com/';
