@@ -25,7 +25,7 @@ class ApiService {
     try {
       var value = await _dio.get(url,
           options: Options(responseType: ResponseType.bytes));
-      var file = File(appDocumentsPath + docName);
+      var file = File('$appDocumentsPath/$docName');
       file.writeAsBytesSync(value.data);
       return file;
       // setState(() {

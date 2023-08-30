@@ -54,6 +54,7 @@ dependencies:
   flutter_charset_detector: ^1.0.2
   syncfusion_flutter_pdf: ^22.2.7
   firebase_core_platform_interface: ^4.8.0
+  permission_handler: ^10.4.3
   # flutter_quill: ^5.4.1
 
 dev_dependencies:
